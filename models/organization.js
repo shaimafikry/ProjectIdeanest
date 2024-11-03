@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 
 const OrganizationsSchema = new mongoose.Schema({
@@ -20,9 +19,6 @@ const OrganizationsSchema = new mongoose.Schema({
 
  }
 )
-
-// OrganizationsSchema.plugin(AutoIncrement, { inc_field: 'id' });
-
 
 const Organizations =  mongoose.model('Organizations', OrganizationsSchema);
 module.exports = Organizations;

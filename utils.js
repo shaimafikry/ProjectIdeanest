@@ -31,7 +31,7 @@ async function generateRefreshTokens ( name, email) {
 }
 
 
-// USIFN REDIS TO STORE TOKENS
+// USE REDIS TO STORE TOKENS
 async function storeTokens(userEmail, accessToken, refreshToken) {
 	await connectRedisClient.set(`access_token:${userEmail}`, accessToken, { EX: 15 * 60 }); // 15 minutes expiration
   await connectRedisClient.set(`refresh_token:${userEmail}`, refreshToken, { EX: 1 * 24 * 60 * 60 }); // 7 days expiration

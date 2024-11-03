@@ -24,8 +24,8 @@ To run this project, ensure you have Docker installed. The Docker Compose file i
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd ideanest
+   git clone https://github.com/shaimafikry/ProjectIdeanest.git
+   cd ProjectIdeanest
 
 2. Start the Docker containers:
 

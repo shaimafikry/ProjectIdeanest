@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { connectRedisClient } = require('../mongoDB'); // use the same Redis client
+const { connectRedisClient } = require('../mongoDB');
 const Users = require('../models/user');
 require('dotenv').config({path: '../.env'});
 const {generateAccessTokens,generateRefreshTokens, storeTokens} = require('../utils');
@@ -14,7 +14,6 @@ async function signIn(req, res) {
 	const { email , password} = req.body;
 
 	const usr = await Users.findOne({ email: email});
-	console.log(usr);
 	
 	if (usr) {
 		// password validation
@@ -109,8 +108,9 @@ async function refreshTokenRenew (req, res) {
 
 
 async function signOut (req, res) {
-	const userEmail = req.user.email; // You may get user info from the request, perhaps via middleware
 
+	const userEmail = req.user.email;
+	
 	try {
 		await connectRedisClient.del(`refresh_token:${userEmail}`);
 		await connectRedisClient.del(`access_token:${userEmail}`);
@@ -125,4 +125,25 @@ async function signOut (req, res) {
 }
 };
 
-module.exports = { signIn , signUp, refreshTokenRenew, signOut};
+
+
+async function revokeRefreshToken (req, res) {
+	const comingRefreshToken = req.body.refresh_token;
+	const userEmail = req.user.email;
+
+	try {
+		const userRefreshToken = await connectRedisClient.get(`refresh_token:${userEmail}`);
+
+		if (userRefreshToken && userRefreshToken === comingRefreshToken) {
+			await connectRedisClient.del(`refresh_token:${userEmail}`);
+			return res.status(200).json({message: 'Refresh Token Revoked'})
+		}
+
+	}catch(error){
+
+		console.error('Error occured during revoke token', error);
+		return res.status(500).json({message: 'Error occured during revoke token'})
+	}
+}
+
+module.exports = { signIn , signUp, refreshTokenRenew, signOut, revokeRefreshToken};

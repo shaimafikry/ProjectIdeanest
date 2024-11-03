@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - '6379:6379'
+
+  app:
+    build: .
+    container_name: Project-Ideanest
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mongo
+      - redis
+    environment:
+       MONGO_URI: mongodb://mongo:27017/project_ideanest
+       REDIS_URI: redis://redis:6379
+       PORT: 8080
+    command: npm start
+
+volumes:
+  mongo-data:
